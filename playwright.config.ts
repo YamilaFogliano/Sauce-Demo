@@ -59,15 +59,26 @@ export default defineConfig({
       name: 'setup',
       testMatch: '**/*.setup.ts',
     },
-    {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: '.auth/admin.json',
-      },
-      dependencies: ['setup'],
-      testIgnore: '**/*.api.spec.ts',
+
+ {
+    name: 'login-tests',
+    testMatch: '**/login.spec.ts',
+    use: {
+      ...devices['Desktop Chrome'],
     },
+  },
+
+
+  {
+    name: 'chromium',
+    use: {
+      ...devices['Desktop Chrome'],
+      storageState: '.auth/admin.json',
+    },
+    dependencies: ['setup'],
+    testIgnore: ['**/*.api.spec.ts', '**/login.spec.ts'], 
+  },
+
     {
       name: 'firefox',
       use: {
