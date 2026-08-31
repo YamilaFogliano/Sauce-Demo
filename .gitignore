@@ -8,3 +8,5 @@ node_modules/
 /playwright/.auth/
 Tablas.txt
 .env
+tests-viejos
+pages-viejos
