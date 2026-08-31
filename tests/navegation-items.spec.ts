@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { SidePanel } from '../pages/SidePanel';
 
-test.describe('Testeo de los elementos de la pagina', () => {
+test.describe('Testeo de los elementos de la pagina principal', () => {
 
     let loginPage: LoginPage;
 
@@ -27,6 +27,16 @@ test.describe('Testeo de los elementos de la pagina', () => {
     });
 
     test('4. Validacion de botones de Redes Sociales', async ({ page }) => {
+        await loginPage.loginAsPerformanceGlitch();
+        await expect(page).toHaveURL(/.*inventory.html/);
+    });
+
+    test('5. Extraccion de la informacion de los productos', async ({ page }) => {
+        await loginPage.loginAsPerformanceGlitch();
+        await expect(page).toHaveURL(/.*inventory.html/);
+    });
+
+    test('6. Click en titulo del item para visualizar producto completo', async ({ page }) => {
         await loginPage.loginAsPerformanceGlitch();
         await expect(page).toHaveURL(/.*inventory.html/);
     });
