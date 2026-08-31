@@ -34,10 +34,13 @@ jobs:
           npx playwright test
         fi
       env:
-        ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
-        ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-        EMP_USERNAME: ${{ secrets.EMP_USERNAME }}
-        EMP_PASSWORD: ${{ secrets.EMP_PASSWORD }}
+        SD_PASSWORD: ${{ secrets.SD_PASSWORD }}
+        STANDARD_USERNAME: ${{ secrets.STANDARD_USERNAME }}
+        LOCKOUT_USERNAME: ${{ secrets.LOCKOUT_USERNAME }}
+        PROBLEM_USERNAME: ${{ secrets.PROBLEM_USERNAME }}
+        PERFORMANCE_GLITCH_USERNAME: ${{ secrets.PERFORMANCE_GLITCH_USERNAME }}
+        ERROR_USERNAME: ${{ secrets.ERROR_USERNAME }}
+        VISUAL_USERNAME: ${{ secrets.VISUAL_USERNAME }}
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
