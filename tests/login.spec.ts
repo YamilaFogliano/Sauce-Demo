@@ -14,7 +14,7 @@ test.describe('Pruebas de Autenticación en SauceDemo', () => {
         await expect(page).toHaveURL(/.*inventory.html/);
     });
 
-    test('2. Validación de usuario bloqueado con Locked Out User', async () => {
+    test('2. Validación de usuario bloqueado con Locked Out User', async ({ page }) => {
         await loginPage.loginAsLockedOut();
         await expect(loginPage.page).toHaveURL('https://www.saucedemo.com/');
         await expect(loginPage.page.locator('[data-test="error"]')).toBeVisible();  // Validación para que permanezca en el login y aparezca el mensaje de error
