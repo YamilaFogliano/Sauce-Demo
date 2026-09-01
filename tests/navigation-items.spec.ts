@@ -151,7 +151,7 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
         await expect(page.locator('.inventory_item').first()).toBeVisible();
 
         const inventorytPage = new InventoryPage(page);
-        inventorytPage.addProduct(3);
+        await inventorytPage.addProduct(3);
 
         await expect(page.locator('.shopping_cart_badge')).toBeVisible();
 
@@ -195,5 +195,38 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
         await expect(page).toHaveURL('/inventory.html')
     });
 
+    test('13. Persistencia de estado entre catálogo y detalle de producto', async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsStandard();
+
+        const inventoryPage = new InventoryPage(page);
+        await inventoryPage.addProductToCart(0);
+        await page.locator('.inventory_item_name').first().click();
+
+        const detailButton = page.locator('.btn_inventory');
+        await expect(detailButton).toHaveText('Remove');
+
+        await detailButton.click();
+        await expect(page.locator('.shopping_cart_badge')).not.toBeVisible();
+    });
+
+    test('14. Verificación de carga de imagenes con problem_user', async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsProblem();
+
+        const firstImageSrc = await page.locator('.inventory_item_img img').first().getAttribute('src');
+        expect(firstImageSrc).toContain('sl-404');
+    });
+
+    test('15. Validar comportamiento con problem_user (se espera fallo en imágenes)', async ({ page }) => {
+        test.fail(true, 'Problem_user tiene las imágenes de productos incorrectas o rotas (sl-404)');
+
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsProblem();
+
+        const firstImageSrc = await page.locator('.inventory_item_img img').first().getAttribute('src');
+
+        expect(firstImageSrc).not.toContain('sl-404');
+    });
 });
 
