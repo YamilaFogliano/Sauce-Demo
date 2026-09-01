@@ -1,5 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
+
 export enum SideMenuOption {
     ALL_ITEMS = 'All Items',
     ABOUT = 'About',

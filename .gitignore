@@ -9,3 +9,4 @@ node_modules/
 Tablas.txt
 .env
 tests-viejos
+allure-results

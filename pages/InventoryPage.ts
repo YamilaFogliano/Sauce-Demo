@@ -32,4 +32,15 @@ export class InventoryPage {
 
         return { name, description, price };
     }
+
+    async addProduct(index = 0): Promise<void> {
+        const productoAgregado = this.inventoryItems.nth(index);
+        await productoAgregado.getByRole('button', { name: 'Add to cart' }).click();
+    }
+
+    async removeProduct(index = 0): Promise<void> {
+        const productoAEliminar = this.inventoryItems.nth(index);
+        await productoAEliminar.getByRole('button', { name: 'Remove' }).click();
+    }
 }
+
