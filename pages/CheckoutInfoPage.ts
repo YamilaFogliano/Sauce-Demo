@@ -6,6 +6,7 @@ export class CheckoutInfoPage {
   readonly lastNameInput: Locator;
   readonly zipCodeInput: Locator;
   readonly continueButton: Locator;
+  readonly cancelButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -13,6 +14,7 @@ export class CheckoutInfoPage {
     this.lastNameInput = page.getByRole('textbox', { name: 'Last Name' });
     this.zipCodeInput = page.getByRole('textbox', { name: 'Zip/Postal Code' });
     this.continueButton = page.getByRole('button', { name: 'Continue' });
+    this.cancelButton = page.getByRole('button', { name: 'Go back Cancel' });
   }
 
   async fillForm(firstName: string, lastName: string, zipCode: string): Promise<void> {
@@ -25,7 +27,11 @@ export class CheckoutInfoPage {
     await this.continueButton.click();
   }
 
-  async fillShippingInfoAndContinue(firstName: string, lastName: string, zipCode: string): Promise<void> {
+  async clickCancel(): Promise<void> {
+    await this.cancelButton.click();
+  }
+
+  async fillShoppingInfoAndContinue(firstName: string, lastName: string, zipCode: string): Promise<void> {
     await this.fillForm(firstName, lastName, zipCode);
     await this.clickContinue();
   }

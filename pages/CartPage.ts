@@ -9,16 +9,26 @@ export interface CartProductDetails {
 export class CartPage {
   readonly page: Page;
   readonly checkoutButton: Locator;
+  readonly continueShoppingButton: Locator;
   readonly cartItems: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.checkoutButton = page.getByRole('button', { name: 'Checkout' });
     this.cartItems = page.locator('[data-test="inventory-item"]');
+    this.continueShoppingButton = page.getByRole('button', { name: 'Go back Continue Shopping' });
   }
 
   async clickCheckout(): Promise<void> {
     await this.checkoutButton.click();
+  }
+
+  async clickContinueShopping(): Promise<void> {
+    await this.continueShoppingButton.click();
+  }
+
+  async removeFirtsItem() {
+    await this.page.getByRole('button', { name: 'Remove' }).first().click();
   }
 
   async getCartProductDetails(index = 0): Promise<CartProductDetails> {
