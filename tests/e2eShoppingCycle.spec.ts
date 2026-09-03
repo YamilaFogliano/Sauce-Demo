@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';                              //AGREGAR TO BE EQUAL COMO ASERCION !!!!!!!!!!!!!!!! 
+import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
 import { CartPage } from '../pages/CartPage';
 import { CheckoutInfoPage } from '../pages/CheckoutInfoPage';
@@ -13,7 +13,7 @@ test.describe('Testeo del proceso de compras End To End', () => {
         loginPage = new LoginPage(page);
     });
 
-    test('1. Seleccion de un solo item y agregado al carrito', async ({ page }) => { //listo
+    test('1. Seleccion de un solo item y agregado al carrito', async ({ page }) => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsStandard();
 
@@ -25,7 +25,7 @@ test.describe('Testeo del proceso de compras End To End', () => {
         await expect(page.locator('.shopping_cart_badge')).toBeVisible();
     });
 
-    test('2. Seleccion de multiples items y agregado al carrito', async ({ page }) => { //listo
+    test('2. Seleccion de multiples items y agregado al carrito', async ({ page }) => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsStandard();
 
@@ -99,10 +99,35 @@ test.describe('Testeo del proceso de compras End To End', () => {
         await expect(cartBadge).toHaveText('2');
 
         // Validacion de datos del usuario: Informacion de pago, envío y precio total.
+        // A. Validar Informacion de Pago y Envio.
+        const checkoutOverviewPage = new CheckoutOverviewPage(page);
+        await expect(checkoutOverviewPage.paymentInfo).toContainText('SauceCard #31337');
+        await expect(checkoutOverviewPage.shippingInfo).toContainText('Free Pony Express Delivery!');
 
+        // B. Sumatoria y comprobacion de precios.
+        const listaPreciosTextos = await checkoutOverviewPage.itemPrices.allInnerTexts();
+        let sumaTotal = 0;
+
+        for (const precioTexto of listaPreciosTextos) {
+            sumaTotal += parseFloat(precioTexto.replace('$', ''));
+        }
+
+        const subtotalText = await checkoutOverviewPage.subtotalLabel.innerText();
+        const subtotalPantalla = parseFloat(subtotalText.replace('Item total: $', ''));
+
+        expect(sumaTotal).toEqual(subtotalPantalla);
+
+        // Agregamos y calculamos el valor del impuesto al total de los productos
+        const taxText = await checkoutOverviewPage.taxLabel.innerText();
+        const taxPantalla = parseFloat(taxText.replace('Tax: $', ''));
+
+        const totalText = await checkoutOverviewPage.totalLabel.innerText();
+        const totalPantalla = parseFloat(totalText.replace('Total: $', ''));
+        const sumaConTax = Number((sumaTotal + taxPantalla).toFixed(2));
+
+        expect(sumaConTax).toEqual(totalPantalla);
 
         // Validacion de boton "Cancel" en Overview Page
-        const checkoutOverviewPage = new CheckoutOverviewPage(page);
         await checkoutOverviewPage.clickCancelOrder();
         await expect(page).toHaveURL('/inventory.html')
         await page.goBack();
@@ -112,89 +137,13 @@ test.describe('Testeo del proceso de compras End To End', () => {
         await expect(page).toHaveURL('/checkout-complete.html');
 
         console.log('✅ Validacion de seccion CheckOut(Complete): Testeo de botones(Back Home y Generate  PDF Order)')
+        // Validacion de boton "Generate PDF Order" y confirmacion de descarga de comprobante.
+        const filename = await checkoutOverviewPage.generatePdfAndVerifyDownload();
+        expect(filename).toContain('.pdf');
 
-        // Validacion de mensaje de finalizacion de compra.
         // Validacion de boton " Back Home"
-        // Validacion de boton "Generate PDF Order"
-
+        await checkoutOverviewPage.clickBackHome();
+        await expect(page).toHaveURL('/inventory.html')
     });
-
-    /*         test('7. Captura de montos totales en tabla @slow', async ({ page }) => {
-            test.slow();
-            await page.goto('/web/index.php/claim/viewAssignClaim');
-    
-            const table = page.getByRole('table');
-            await expect(table).toBeVisible();
-    
-            const amountCells = table.getByRole('rowgroup').nth(1).locator('div[role="cell"]:nth-child(8), td:nth-child(8)');
-    
-            await expect(amountCells.first()).toBeVisible();
-    
-            const rawTexts = await amountCells.allTextContents();
-    
-            const amounts = rawTexts
-                .map(text => parseFloat(text.replace(/,/g, '').trim()))
-                .filter(num => !isNaN(num));
-    
-            const total = amounts.reduce((acc, curr) => acc + curr, 0);
-    
-            console.log('Cantidades:', amounts);
-            console.log('El total es:', total);
-        }); */
-
-
-    test('10. Confirmar los datos de pago', async ({ page }) => {
-
-    });
-
-    test('12. Boton: Back Home - Volver al inicio', async ({ page }) => {
-
-    });
-
-    test('13. Boton: Generate PDF Order - Generar comprobante de compra', async ({ page }) => {
-    });
-
-    test('14. Click en comprobante de compra', async ({ page }) => {
-
-    });
-
-    test('15. Comprobar que los datos emitidos en comprobante son correctos', async ({ page }) => {
-
-    });
-
 });
 
-/*     
-
-test("Test extracc y mod como Postman", async ({ page }) => {
-
-    await page.route(
-        "https://demoqa.com/BookStore/v1/Books",
-        (route) => {
-            route.fulfill({
-                status: 304,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: `
-
-            {
-                "books": [
-                    {
-                        "isbn": "9781449325862",
-                        "title": "El libro de María Yamila",
-                        "subTitle": "A Working Introduction",
-                        "author": "Richard E. Silverman y Yamila",
-                        "publish_date": "2020-06-04T08:48:39.000Z",
-                        "publisher": "O'Reilly Media y Yamila",
-                        "pages": 550,
-                        "description": "Prueba de APIs extracción de info y modificacion de registros como en postman",
-                        "website": "http://chimera.labs.oreilly.com/books/1230000000561/index.html"
-                    }
-                ]
-            }
-            `
-            })
-        }
-    );
-*/
