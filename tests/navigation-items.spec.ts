@@ -4,18 +4,16 @@ import { SideMenuOption, SidePanel } from '../pages/SidePanel';
 import { InventoryPage } from '../pages/InventoryPage';
 import { FilterPanel, FilterOption } from '../pages/FilterPanel';
 
-test.describe('Testeo de los elementos de la pagina principal', () => {
+test.describe('Testeo de los elementos de la pagina principal con Standard User', () => {
 
     let loginPage: LoginPage;
 
     test.beforeEach(async ({ page }) => {
         loginPage = new LoginPage(page);
+        await loginPage.loginAsStandard();
     });
 
     test('1. Validacion de elementos de menu lateral: ALL ITEMS', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await page.locator('.inventory_item_name').first().click();
         await expect(page).toHaveURL(/.*inventory-item.html/);
 
@@ -27,9 +25,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('2. Validacion de elementos de menu lateral: ABOUT', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         const sidePanel = new SidePanel(page);
         await expect(page.locator('div.bm-burger-button')).toBeVisible();
         await sidePanel.clickOnOption(SideMenuOption.ABOUT)
@@ -38,9 +33,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('3. Validacion de elementos de menu lateral: LOGOUT', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         const sidePanel = new SidePanel(page);
         await expect(page.locator('div.bm-burger-button')).toBeVisible();
         await sidePanel.clickOnOption(SideMenuOption.LOGOUT)
@@ -48,9 +40,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
 
     test('4. Validacion de elementos de menu lateral: RESET APP STATE @slow', async ({ page }) => {
         test.slow();
-
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
 
         const inventorytPage = new InventoryPage(page);
         await inventorytPage.addProductToCart(1);
@@ -65,9 +54,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('5. Validación de icono de carrito', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await expect(page.locator('a.shopping_cart_link')).toBeVisible()
 
         const inventorytPage = new InventoryPage(page);
@@ -81,9 +67,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('6. Validacion de filtro desplegable', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         const filterPanel = new FilterPanel(page);
 
         await filterPanel.selectFilter(FilterOption.NAME_A_Z);
@@ -100,9 +83,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('7. Validacion de botones de Redes Sociales', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         const [twitterPage] = await Promise.all([
             page.waitForEvent('popup'),
             page.getByRole('link', { name: 'Twitter' }).click(),
@@ -126,9 +106,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('8. Extraccion de la informacion de los productos: Nombre, Descripcion y Precio', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         const inventorytPage = new InventoryPage(page);
         await inventorytPage.addProductToCart(0);
 
@@ -145,9 +122,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('9. Validación de botón: Add To Cart', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await expect(page.locator('.inventory_item').first()).toBeVisible();
 
         const inventorytPage = new InventoryPage(page);
@@ -158,9 +132,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('10. Validación de botón: Remove', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await expect(page.locator('a.shopping_cart_link')).toBeVisible()
 
         const inventorytPage = new InventoryPage(page);
@@ -172,9 +143,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('11. Click en titulo del item para visualizar producto completo', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await expect(page.locator('.inventory_item').first()).toBeVisible();
         await page.locator('.inventory_item_name').first().click();
 
@@ -183,9 +151,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('12. Boton: Back to products - Volver al catalogo', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await expect(page.locator('.inventory_item').first()).toBeVisible();
         await page.locator('.inventory_item_name').first().click()
 
@@ -196,9 +161,6 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
     });
 
     test('13. Persistencia de estado entre catálogo y detalle de producto', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         const inventoryPage = new InventoryPage(page);
         await inventoryPage.addProductToCart(0);
         await page.locator('.inventory_item_name').first().click();
@@ -209,8 +171,15 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
         await detailButton.click();
         await expect(page.locator('.shopping_cart_badge')).not.toBeVisible();
     });
+});
 
-    test('14. Verificación de carga de imagenes con problem_user', async ({ page }) => {
+test.describe('Testeo de los elementos de la pagina principal con Problem User', () => {
+    test.beforeEach(async ({ page }) => {
+        const loginPage = new LoginPage(page);
+        await loginPage.loginAsProblem();
+    });
+
+    test('1. Verificación de carga de imagenes con problem_user', async ({ page }) => {
         const loginPage = new LoginPage(page);
         await loginPage.loginAsProblem();
 
@@ -218,7 +187,7 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
         expect(firstImageSrc).toContain('sl-404');
     });
 
-    test('15. Validar comportamiento con problem_user (se espera fallo en imágenes)', async ({ page }) => {
+    test('2. Validar comportamiento con problem_user (se espera fallo en imágenes)', async ({ page }) => {
         test.fail(true, 'Problem_user tiene las imágenes de productos incorrectas o rotas (sl-404)');
 
         const loginPage = new LoginPage(page);
@@ -229,4 +198,3 @@ test.describe('Testeo de los elementos de la pagina principal', () => {
         expect(firstImageSrc).not.toContain('sl-404');
     });
 });
-

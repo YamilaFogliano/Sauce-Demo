@@ -11,12 +11,10 @@ test.describe('Testeo del proceso de compras End To End', () => {
 
     test.beforeEach(async ({ page }) => {
         loginPage = new LoginPage(page);
+        await loginPage.loginAsStandard();
     });
 
     test('1. Seleccion de un solo item y agregado al carrito', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await expect(page.locator('.inventory_item').first()).toBeVisible();
 
         const inventorytPage = new InventoryPage(page);
@@ -26,9 +24,6 @@ test.describe('Testeo del proceso de compras End To End', () => {
     });
 
     test('2. Seleccion de multiples items y agregado al carrito', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         await expect(page.locator('.inventory_item').first()).toBeVisible();
 
         const inventoryPage = new InventoryPage(page);
@@ -46,9 +41,6 @@ test.describe('Testeo del proceso de compras End To End', () => {
     });
 
     test('3. Flujo completo de compra feliz (Login -> Carrito -> Checkout -> Confirmación)', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await loginPage.loginAsStandard();
-
         console.log('✅ Agregando productos al carrito')
         const inventoryPage = new InventoryPage(page);
         await inventoryPage.addProductToCart(0);
